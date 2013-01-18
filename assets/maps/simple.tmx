@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="24" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="startX" value="32"/>
+  <property name="startY" value="32"/>
+ </properties>
+ <tileset firstgid="1" name="Simple" tilewidth="32" tileheight="32">
+  <image source="filled-tile.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Impact" width="32" height="24">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBxgTEuAz/xR+0ftH+724wMDnXcHi/301ksP+2kdhoPdfmL1j9o/aj+l+slJ40PdfkrBqP2DAwMAxSQA1Q==
+  </data>
+ </layer>
+</map>
