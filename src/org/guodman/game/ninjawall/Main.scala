@@ -106,9 +106,19 @@ class Main extends BasicGame("Ninja Wall") {
     }
     horizontals = horizontals.filter(i => {
       val px: Int = ((i - info.move.intercept) / info.move.slope).toInt
-      info.map.getTileId(px / 32, i / 32, 0) != 0 || (i/32 > 0 && info.map.getTileId(px / 32, (i / 32) - 1, 0) != 0)
+      val on = try {
+        info.map.getTileId(px / 32, i / 32, 0) != 0
+      } catch {
+        case e: Exception => false
+      }
+      val adjacent = try {
+        info.map.getTileId(px / 32, (i / 32) - 1, 0) != 0
+      } catch {
+        case e: Exception => false
+      }
+      on || adjacent
     })
-    var horizontalPoint: MapPoint = new MapPoint(0, 0);
+    var horizontalPoint: MapPoint = null
     if (horizontals.length > 0) {
       horizontalPoint = new MapPoint((horizontals(0) - info.move.intercept) / info.move.slope, horizontals(0))
     }
@@ -122,9 +132,19 @@ class Main extends BasicGame("Ninja Wall") {
     }
     verticals = verticals.filter(i => {
       val py: Int = (i * info.move.slope + info.move.intercept).toInt
-      info.map.getTileId(i / 32, py / 32, 0) != 0 || (i/32 > 0 && info.map.getTileId((i / 32) - 1, py / 32, 0) != 0)
+      val on = try {
+        info.map.getTileId(i / 32, py / 32, 0) != 0
+      } catch {
+        case e: Exception => false
+      }
+      val adjacent = try {
+        info.map.getTileId((i / 32) - 1, py / 32, 0) != 0
+      } catch {
+        case e: Exception => false
+      }
+      on || adjacent
     })
-    var verticalPoint: MapPoint = new MapPoint(0, 0);
+    var verticalPoint: MapPoint = null
     if (verticals.length > 0) {
       verticalPoint = new MapPoint(verticals(0), verticals(0) * info.move.slope + info.move.intercept)
     }

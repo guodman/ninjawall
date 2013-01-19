@@ -7,7 +7,7 @@ import org.newdawn.slick.Image
 class Player(var position: MapPoint) {
   val image = new Image("/assets/images/ninja-wall.png")
   var goto: MapPoint = null
-  val speed: Double = 0.1
+  val speed: Double = 0.5
 
   def render(container: GameContainer, g: Graphics) = {
     image.draw(position.xf, position.yf)
