@@ -8,6 +8,10 @@ class Player(var position: MapPoint) {
   val image = new Image("/assets/images/ninja-wall.png")
   var goto: MapPoint = null
   val speed: Double = 0.5
+  
+  def isMoving: Boolean = {
+    return goto != null
+  }
 
   def render(container: GameContainer, g: Graphics) = {
     image.draw(position.xf, position.yf)
@@ -24,7 +28,7 @@ class Player(var position: MapPoint) {
   }
 
   def move(next: MapPoint) {
-    if (next != null) {
+    if (next != null && !isMoving) {
       goto = next
     }
   }
