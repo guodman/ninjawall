@@ -93,10 +93,26 @@ class Main extends BasicGame("Ninja Wall") {
   }
 
   def findIntersect: MapPoint = {
+    val layer = 0
     val s: Double = 0
     val i: Double = 60
     val x: Double = (i - info.move.intercept) / (info.move.slope - s)
     val y: Double = info.move.slope * x + info.move.intercept
+
+    // determine if we are trying to move into a block
+    var direction = if (info.move.start.x < info.move.end.x) { 1 } else { -1 }
+    println(direction)
+    val check: Boolean = try {
+      val px: Int = (info.move.start.x + direction).toInt
+      val py: Int = (info.move.slope * px + info.move.intercept).toInt
+      info.map.getTileId(px / 32, py / 32, layer) != 0
+    } catch {
+      case e: Exception => false
+    }
+    if (check) {
+      return null
+    }
+
     var horizontals = (0 until (info.map.getHeight * info.map.getTileHeight) by info.map.getTileHeight).filter(j => {
       j > math.min(info.move.start.y, info.move.end.y) &&
         j < math.max(info.move.start.y, info.move.end.y)
@@ -107,12 +123,12 @@ class Main extends BasicGame("Ninja Wall") {
     horizontals = horizontals.filter(i => {
       val px: Int = ((i - info.move.intercept) / info.move.slope).toInt
       val on = try {
-        info.map.getTileId(px / 32, i / 32, 0) != 0
+        info.map.getTileId(px / 32, i / 32, layer) != 0
       } catch {
         case e: Exception => false
       }
       val adjacent = try {
-        info.map.getTileId(px / 32, (i / 32) - 1, 0) != 0
+        info.map.getTileId(px / 32, (i / 32) - 1, layer) != 0
       } catch {
         case e: Exception => false
       }
@@ -133,12 +149,12 @@ class Main extends BasicGame("Ninja Wall") {
     verticals = verticals.filter(i => {
       val py: Int = (i * info.move.slope + info.move.intercept).toInt
       val on = try {
-        info.map.getTileId(i / 32, py / 32, 0) != 0
+        info.map.getTileId(i / 32, py / 32, layer) != 0
       } catch {
         case e: Exception => false
       }
       val adjacent = try {
-        info.map.getTileId((i / 32) - 1, py / 32, 0) != 0
+        info.map.getTileId((i / 32) - 1, py / 32, layer) != 0
       } catch {
         case e: Exception => false
       }
