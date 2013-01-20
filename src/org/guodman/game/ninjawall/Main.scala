@@ -37,16 +37,10 @@ class Main extends BasicGame("Ninja Wall") {
     info.map.render(0, 0)
     info.player.render(container, g)
     info.move.render(container, g)
-    //val intersect = findIntersect
-    // println("x:" + intersect.x + " y:" + intersect.y)
-    g.setColor(Color.red)
-    //if (intersect != null) {
-    //g.drawLine(intersect.xf, intersect.yf, intersect.xf + 1, intersect.yf + 1)
-    //}
-    g.setColor(Color.white)
-
+    
     g.drawString("Last Click: " + info.clickX + "x" + info.clickY, 10, 25)
     g.drawString("Mouse Position: " + info.mouseX + "x" + info.mouseY, 10, 40)
+    g.drawString("Player Position: " + info.player.position.x + "x" + info.player.position.y, 10, 55)
   }
 
   def update(container: GameContainer, delta: Int) = {
@@ -57,7 +51,7 @@ class Main extends BasicGame("Ninja Wall") {
     if (!info.paused) {
       info.player.update(container, delta)
       info.move.start = info.player.position
-      info.move.direction = new MapPoint(info.mouseX, info.mouseY)
+      info.move.direction = new MapPoint(info.map, info.mouseX, info.mouseY)
     }
   }
 
@@ -101,7 +95,6 @@ class Main extends BasicGame("Ninja Wall") {
 
     // determine if we are trying to move into a block
     var direction = if (info.move.start.x < info.move.end.x) { 1 } else { -1 }
-    println(direction)
     val check: Boolean = try {
       val px: Int = (info.move.start.x + direction).toInt
       val py: Int = (info.move.slope * px + info.move.intercept).toInt
@@ -113,6 +106,7 @@ class Main extends BasicGame("Ninja Wall") {
       return null
     }
 
+    // We are not trying to move into a block, so jump to the closest wall.
     var horizontals = (0 until (info.map.getHeight * info.map.getTileHeight) by info.map.getTileHeight).filter(j => {
       j > math.min(info.move.start.y, info.move.end.y) &&
         j < math.max(info.move.start.y, info.move.end.y)
@@ -136,7 +130,7 @@ class Main extends BasicGame("Ninja Wall") {
     })
     var horizontalPoint: MapPoint = null
     if (horizontals.length > 0) {
-      horizontalPoint = new MapPoint((horizontals(0) - info.move.intercept) / info.move.slope, horizontals(0))
+      horizontalPoint = new MapPoint(info.map, (horizontals(0) - info.move.intercept) / info.move.slope, horizontals(0))
     }
 
     var verticals = (0 until (info.map.getWidth * info.map.getTileWidth) by info.map.getTileWidth).filter(j => {
@@ -162,7 +156,7 @@ class Main extends BasicGame("Ninja Wall") {
     })
     var verticalPoint: MapPoint = null
     if (verticals.length > 0) {
-      verticalPoint = new MapPoint(verticals(0), verticals(0) * info.move.slope + info.move.intercept)
+      verticalPoint = new MapPoint(info.map, verticals(0), verticals(0) * info.move.slope + info.move.intercept)
     }
 
     if (horizontalPoint != null && verticalPoint != null) {
@@ -192,6 +186,6 @@ class GameInfo {
   var map: TiledMap = new TiledMap("/assets/maps/simple.tmx")
   val startX = map.getMapProperty("startX", "0").toInt
   val startY = map.getMapProperty("startY", "0").toInt
-  var player = new Player(new MapPoint(startX, startY))
+  var player = new Player(new MapPoint(map, startX, startY))
   var move: Line = new Line(player.position, player.position, 300)
 }

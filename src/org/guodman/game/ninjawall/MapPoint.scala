@@ -1,15 +1,43 @@
 package org.guodman.game.ninjawall
 
-class MapPoint(val x: Double, val y: Double) {
+import org.newdawn.slick.tiled.TiledMap
+
+class MapPoint(val map: TiledMap, val x: Double, val y: Double) {
   def xf: Float = return x.toFloat
   def yf: Float = return y.toFloat
 
   def asString: String = "x:" + x + " y:" + y
 
+  def touchesWall: MapPoint.WallDirection = {
+    import MapPoint.WallDirection._
+    val tileHeight: Int = map.getTileHeight
+    val tileWidth: Int = map.getTileWidth
+    val layer: Int = 0
+    if (map.getTileId(((x) / tileWidth).toInt, ((y - tileHeight / 2) / tileHeight).toInt, layer) != 0 &&
+        map.getTileId(((x - 1) / tileWidth).toInt, ((y - tileHeight / 2) / tileHeight).toInt, layer) != 0 &&
+        map.getTileId(((x + 1) / tileWidth).toInt, ((y - tileHeight / 2) / tileHeight).toInt, layer) != 0) {
+      return Above
+    } else if (map.getTileId(((x) / tileWidth).toInt, ((y + tileHeight / 2) / tileHeight).toInt, layer) != 0 &&
+        map.getTileId(((x - 1) / tileWidth).toInt, ((y + tileHeight / 2) / tileHeight).toInt, layer) != 0 &&
+        map.getTileId(((x + 1) / tileWidth).toInt, ((y + tileHeight / 2) / tileHeight).toInt, layer) != 0) {
+      return Below
+    } else if (map.getTileId(((x - tileWidth / 2) / tileWidth).toInt, ((y) / tileHeight).toInt, layer) != 0) {
+      return Left
+    } else if (map.getTileId(((x + tileWidth / 2) / tileWidth).toInt, ((y) / tileHeight).toInt, layer) != 0) {
+      return Right
+    } else if (map.getTileId(((x) / tileWidth).toInt, ((y - tileHeight / 2) / tileHeight).toInt, layer) != 0) {
+      return Above
+    } else if (map.getTileId(((x) / tileWidth).toInt, ((y + tileHeight / 2) / tileHeight).toInt, layer) != 0) {
+      return Below
+    } else {
+      return No
+    }
+  }
+
   def increment(other: MapPoint, length: Double, fullLength: Boolean = false): MapPoint = {
     val dir = this.direction(other)
     if (distance(other) > length || fullLength) {
-      return new MapPoint(x - length * math.sin(dir),
+      return new MapPoint(map, x - length * math.sin(dir),
         y + length * math.cos(dir))
     } else {
       return other
@@ -51,9 +79,16 @@ class MapPoint(val x: Double, val y: Double) {
 }
 
 object MapPoint {
+  sealed trait WallDirection {}
+  object WallDirection {
+    case object Above extends WallDirection
+    case object Below extends WallDirection
+    case object Left extends WallDirection
+    case object Right extends WallDirection
+    case object No extends WallDirection
+  }
+
   def centerRadians(rad: Double): Double = {
-    // r is not final because there's not much point in making it final
-    // the whole point of this is to modify r
     var r = rad
     while (r > math.Pi) {
       r -= math.Pi * 2
