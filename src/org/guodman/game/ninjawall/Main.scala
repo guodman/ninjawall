@@ -35,8 +35,9 @@ class Main extends BasicGame("Ninja Wall") {
 
   def render(container: GameContainer, g: Graphics) = {
     info.map.render(0, 0)
+    info.jumpTo.render(container, g)
     info.player.render(container, g)
-    info.move.render(container, g)
+    //info.move.render(container, g)
     
     g.drawString("Last Click: " + info.clickX + "x" + info.clickY, 10, 25)
     g.drawString("Mouse Position: " + info.mouseX + "x" + info.mouseY, 10, 40)
@@ -52,6 +53,7 @@ class Main extends BasicGame("Ninja Wall") {
       info.player.update(container, delta)
       info.move.start = info.player.position
       info.move.direction = new MapPoint(info.map, info.mouseX, info.mouseY)
+      info.jumpTo.position = findIntersect
     }
   }
 
@@ -188,4 +190,5 @@ class GameInfo {
   val startY = map.getMapProperty("startY", "0").toInt
   var player = new Player(new MapPoint(map, startX, startY))
   var move: Line = new Line(player.position, player.position, 300)
+  val jumpTo = new JumpTo
 }
