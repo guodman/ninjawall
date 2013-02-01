@@ -14,6 +14,8 @@ object Main {
   val HEIGHT = 768
 
   def main(args: Array[String]) {
+    //System.load("/home/doug/programming/workspace-4.2/NinjaWall/lib/native/liblwjgl64.so")
+    LibraryHelper.addDir("lib/native/")
     val container: AppGameContainer = new AppGameContainer(
       new Main(), WIDTH, HEIGHT, false);
     container.start()

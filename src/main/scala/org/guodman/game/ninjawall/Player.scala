@@ -11,11 +11,11 @@ class Player(var position: MapPoint) {
   val imageLeftWall = new Image("/assets/images/ninja-wall-left.png")
   val imageRightWall = new Image("/assets/images/ninja-wall-right.png")
   val imageAir = new Image("/assets/images/ninja-air.png")
-  var goto: MapPoint = null
+  var goto: Option[MapPoint] = None
   val speed: Double = 0.5
 
   def isMoving: Boolean = {
-    return goto != null
+    return goto.isDefined
   }
 
   def render(container: GameContainer, g: Graphics) = {
@@ -30,18 +30,18 @@ class Player(var position: MapPoint) {
   }
 
   def update(container: GameContainer, delta: Int) = {
-    if (goto != null) {
-      val next = position.increment(goto, speed * delta)
+    goto.foreach({g =>
+      val next = position.increment(g, speed * delta)
       position = next
-      if (position.distance(goto) <= speed * delta) {
-        goto = null
+      if (position.distance(g) <= speed * delta) {
+        goto = None
       }
-    }
+    })
   }
 
   def move(next: MapPoint) {
     if (next != null && !isMoving) {
-      goto = next
+      goto = Some(next)
     }
   }
 }
